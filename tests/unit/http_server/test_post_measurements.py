@@ -23,3 +23,9 @@ def post_measurement_should_store_measurement(test_client: TestClient, database:
             timestamp=datetime(2023, 11, 19, 12, 0, 0, 0, tzinfo=ZoneInfo("UTC")),
         ),
     )
+
+
+def post_measurement_should_return_501_if_measurement_unit_is_not_k(test_client: TestClient, database: Mock):
+    response = test_client.post("/measurements/myroom", json={"v": 300, "u": "C", "ts": "2023-11-19T12:00:00Z"})
+    assert response.status_code == 501
+    database.insert_measurement.assert_not_called()
