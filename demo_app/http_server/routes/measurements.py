@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import Field
 from demo_app.db.models.database_base import Database
 from demo_app.db.models.measurement import Measurement, Unit
 from demo_app.http_server.dependencies import get_database
@@ -13,9 +14,10 @@ router = APIRouter(
 
 
 class CreateMeasurementDTO(DTOBaseModel):
-    v: float | int
-    u: str = "K"
-    ts: datetime
+    """Create a new measurement"""
+    v: float | int = Field(description="The value of the measurement, for example 300")
+    u: str = Field(description="The unit of the measurement. At the moment only K is supported", default="K")
+    ts: datetime = Field(description="The timestamp of the measurement")
 
 
 @router.post(
@@ -28,6 +30,8 @@ async def create_measurement(
     room_id: str,
     measurement: CreateMeasurementDTO,
 ) -> None:
+    if measurement.u != "K":
+        raise HTTPException(status_code=501, detail="Only Kelvin is supported at the moment")
     m = Measurement(
         room_id=room_id,
         value=measurement.v,
