@@ -46,3 +46,6 @@ async def create_measurement(
     )
     if database.insert_measurement(m):
         return
+    else:
+        # database error handling is out of scope
+        return
