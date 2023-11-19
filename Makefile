@@ -23,3 +23,8 @@ check: lint typecheck
 test: run-db
 	poetry run python -m pytest
 
+build:
+	docker compose build app
+
+publish:
+	echo "publishing left as an exercise to the reader :)"

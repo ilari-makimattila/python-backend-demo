@@ -1,0 +1,28 @@
+name: Verify and Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Verify
+        run: make check
+
+      - name: Test
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Publish
+        run: make publish
