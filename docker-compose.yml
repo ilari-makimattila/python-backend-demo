@@ -1,0 +1,16 @@
+---
+services:
+  database:
+    image: postgres:16-alpine
+    stop_grace_period: 3s
+    ports:
+      - 54321:5432
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: password
+
+volumes:
+  database:

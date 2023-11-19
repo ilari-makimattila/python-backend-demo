@@ -1,7 +1,10 @@
 install:
 	poetry install
 
-dev:
+run-db:
+	docker compose up -d database
+
+dev: run-db
 	poetry run python -m demo_app http --dev
 
 lint:
@@ -12,6 +15,6 @@ typecheck:
 
 check: lint typecheck
 
-test:
+test: run-db
 	poetry run python -m pytest
 

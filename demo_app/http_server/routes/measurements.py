@@ -51,7 +51,7 @@ async def create_measurement(
         unit=Unit.K,
         timestamp=measurement.ts,
     )
-    if database.insert_measurement(m):
+    if await database.insert_measurement(m):
         return
     else:
         # database error handling is out of scope
@@ -68,7 +68,7 @@ async def get_room_average(
     room_id: str,
     duration: timedelta,
 ) -> RoomAverageTemperatureDTO:
-    result = database.get_room_average(room_id, duration)
+    result = await database.get_room_average(room_id, duration)
     if result is None:
         raise HTTPException(status_code=404, detail="Room not found")
     return RoomAverageTemperatureDTO(
