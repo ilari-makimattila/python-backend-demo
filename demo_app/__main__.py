@@ -32,6 +32,20 @@ def http_server(args: argparse.Namespace, unknown_args: list[str] | None) -> Non
     )
 
 
+def migrate(args: argparse.Namespace, unknown_args: list[str] | None) -> None:
+    import asyncio
+
+    from demo_app.db.asyncpg_database import AsyncpgDatabase
+    from demo_app.settings import Settings
+
+    async def execute() -> None:
+        db = AsyncpgDatabase(Settings())  # type: ignore # (pydantic models can be initialized without arguments)
+        await db.connect()
+        await db.migrate()
+
+    asyncio.run(execute())
+
+
 argparser = argparse.ArgumentParser(prog="python demo app")
 argsubparsers = argparser.add_subparsers(required=True)
 
@@ -41,6 +55,9 @@ argparser_http.add_argument("--port", help="Port to listen to", default=os.envir
 argparser_http.add_argument("--workers", help="Number of uvicorn workers", default=10)
 argparser_http.add_argument("--log-level", help="Log Level", default="debug")
 argparser_http.add_argument("--dev", help="Run in devevelopment mode", action="store_true")
+
+argparser_migrate = argsubparsers.add_parser("migrate", help="Migrate the database")
+argparser_migrate.set_defaults(func=migrate)
 
 arguments, unknown_arguments = argparser.parse_known_args()
 arguments.func(arguments, unknown_arguments)

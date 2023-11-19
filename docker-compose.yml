@@ -1,5 +1,19 @@
 ---
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: http --dev
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+    environment:
+      DATABASE_DSN: postgresql://demo:password@database:5432/demo
+
   database:
     image: postgres:16-alpine
     stop_grace_period: 3s
