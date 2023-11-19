@@ -25,6 +25,20 @@ def post_measurement_should_store_measurement(test_client: TestClient, database:
     )
 
 
+def post_measurement_should_default_to_k(test_client: TestClient, database: Mock):
+    database.insert_measurement.return_value = True
+    response = test_client.post("/measurements/aroom", json={"v": 20, "ts": "2023-11-19T13:00:00Z"})
+    assert response.status_code == 201
+    database.insert_measurement.assert_called_once_with(
+        Measurement(
+            room_id="aroom",
+            value=20,
+            unit=Unit.K,
+            timestamp=datetime(2023, 11, 19, 13, 0, 0, 0, tzinfo=ZoneInfo("UTC")),
+        ),
+    )
+
+
 def post_measurement_should_return_501_if_measurement_unit_is_not_k(test_client: TestClient, database: Mock):
     response = test_client.post("/measurements/myroom", json={"v": 300, "u": "C", "ts": "2023-11-19T12:00:00Z"})
     assert response.status_code == 501
