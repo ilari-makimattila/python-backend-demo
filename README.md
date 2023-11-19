@@ -30,8 +30,16 @@ Python linters out of the box.
 Pytest is in my opinion the most powerful testing framework. Not only for Python
 but it's better than any other framework I've seen for any language.
 
-Architecture
-------------
+Requirements and Architecture
+-----------------------------
+
+1. A RESTful API with two endpoints:
+    * `POST /measurements/:room_id` to store temperature measurements
+    * `GET /measurements/:room_id/average/:duration` to retrieve an average of
+      temperature measurements per room
+2. A database to store temperature measurements
+3. App is dockerized
+4. A CI/CD pipeline is set up
 
 The app is built using the [FastAPI](https://fastapi.tiangolo.com/) framework.
 It is a lightweight and fast REST API framework that offers many things such as

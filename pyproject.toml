@@ -19,6 +19,7 @@ ruff = "^0.1.6"
 pytest-xdist = "^3.4.0"
 httpx = "^0.25.1"
 mypy = "^1.7.0"
+faker = "^20.0.3"
 
 [build-system]
 requires = ["poetry-core"]
