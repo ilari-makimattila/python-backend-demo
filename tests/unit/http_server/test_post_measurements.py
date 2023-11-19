@@ -43,3 +43,11 @@ def post_measurement_should_return_501_if_measurement_unit_is_not_k(test_client:
     response = test_client.post("/measurements/myroom", json={"v": 300, "u": "C", "ts": "2023-11-19T12:00:00Z"})
     assert response.status_code == 501
     database.insert_measurement.assert_not_called()
+
+
+def post_measurement_should_return_422_if_measurement_value_is_impossible(test_client: TestClient, database: Mock):
+    response = test_client.post("/measurements/myroom", json={"v": -100, "ts": "2023-11-19T12:00:00Z"})
+    assert response.status_code == 422
+    body = response.json()
+    assert body["detail"] == "Kelvin value must be greater than or equal to 0"
+    database.insert_measurement.assert_not_called()
