@@ -12,23 +12,25 @@ typical development workflow.
 
 ### Package management with poetry
 
-Python Poetry is a modern take on package management. It is significantly
-easier than using pip for example.
+[Python Poetry](https://python-poetry.org/) is a modern take on package
+management. It is significantly easier than using pip for example.
 
 ### Static type checking with mypy
 
+[mypy](https://mypy.readthedocs.io/en/stable/) enables type checking for Python.
 Type checking is an important part of the development process. It makes the
 software easier to work with in the long run and increases overall correctness.
 
 ### Linting with ruff
 
-Ruff is a modern and fast linter that supports most rules and features of other
-Python linters out of the box.
+[Ruff](https://docs.astral.sh/ruff/) is a modern and fast linter that supports
+most rules and features of other Python linters out of the box.
 
 ### Testing with pytest
 
-Pytest is in my opinion the most powerful testing framework. Not only for Python
-but it's better than any other framework I've seen for any language.
+[Pytest](https://docs.pytest.org/en/latest/) is in my opinion the most powerful
+testing framework. Not only for Python but it's better than any other framework
+I've seen for any language.
 
 Requirements and Architecture
 -----------------------------
@@ -44,6 +46,13 @@ Requirements and Architecture
 The app is built using the [FastAPI](https://fastapi.tiangolo.com/) framework.
 It is a lightweight and fast REST API framework that offers many things such as
 request validation and API docs out of the box.
+
+PostgreSQL is used as the database. It may not be the optimal for time series
+data but one of the ideas of this project is to demonstrate how to abstract
+the database so it can be swapped without having to change the whole app.
+Database connection is managed with [asyncpg](https://github.com/MagicStack/asyncpg).
+It is a simple and fast library that doesn't try to abstract the database away
+and let's us do that instead.
 
 Development
 -----------
