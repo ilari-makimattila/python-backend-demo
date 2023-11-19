@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -26,6 +26,13 @@ class CreateMeasurementDTO(DTOBaseModel):
         return self
 
 
+class RoomAverageTemperatureDTO(DTOBaseModel):
+    """Get the average temperature of a room for a given duration"""
+    v: float | int = Field(description="The average temperature of the room during the duration")
+    u: str = Field(description="The unit of the temperature", default="K")
+    ts: datetime = Field(description="The timestamp the beginning of the measurements in the duration")
+
+
 @router.post(
     "/{room_id}",
     status_code=201,
@@ -49,3 +56,19 @@ async def create_measurement(
     else:
         # database error handling is out of scope
         return
+
+
+@router.get(
+    "/{room_id}/average/{duration}",
+    response_model=RoomAverageTemperatureDTO,
+    description="Get the average temperature of a room for a given duration",
+)
+async def get_room_average(
+    database: Annotated[Database, Depends(get_database)],
+    room_id: str,
+    duration: timedelta,
+) -> RoomAverageTemperatureDTO:
+    result = database.get_room_average(room_id, duration)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    raise NotImplementedError()
