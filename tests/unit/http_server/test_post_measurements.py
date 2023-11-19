@@ -68,6 +68,12 @@ def get_measurement_average_should_return_404_if_room_is_not_found(test_client: 
     assert response.status_code == 404
 
 
+def get_measurement_average_should_return_422_if_duration_is_invalid(test_client: TestClient, database: Mock):
+    database.get_room_average.return_value = None
+    response = test_client.get("/measurements/myroom/average/foo")
+    assert response.status_code == 422
+
+
 def get_measurement_average_should_return_the_average(test_client: TestClient, database: Mock):
     database.get_room_average.return_value = MeasurementAverage(
         value=320.0,
