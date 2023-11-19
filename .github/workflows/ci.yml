@@ -8,12 +8,20 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Verify-and-Build:
+    runs-on: python-3.11-slim
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: trim21/setup-poetry@dist/v2
+        with:
+          version: "<2.0"
+
+      - name: Install
+        run: make install
 
       - name: Verify
         run: make check
