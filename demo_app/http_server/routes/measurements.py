@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import Field
+from pydantic import Field, model_validator
 from demo_app.db.models.database_base import Database
 from demo_app.db.models.measurement import Measurement, Unit
 from demo_app.http_server.dependencies import get_database
@@ -18,6 +18,12 @@ class CreateMeasurementDTO(DTOBaseModel):
     v: float | int = Field(description="The value of the measurement, for example 300")
     u: str = Field(description="The unit of the measurement. At the moment only K is supported", default="K")
     ts: datetime = Field(description="The timestamp of the measurement")
+
+    @model_validator(mode="after")
+    def validate_kelvin(self) -> 'CreateMeasurementDTO':
+        if self.u.upper() == "K" and self.v < 0:
+            raise ValueError("Kelvin value must be greater than or equal to 0")
+        return self
 
 
 @router.post(

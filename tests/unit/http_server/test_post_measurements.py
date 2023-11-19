@@ -2,8 +2,11 @@ from datetime import datetime
 from unittest.mock import Mock
 from zoneinfo import ZoneInfo
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
+import pytest
 
 from demo_app.db.models.measurement import Measurement, Unit
+from demo_app.http_server.routes.measurements import CreateMeasurementDTO
 
 
 def post_measurement_without_body_should_respond_with_422(test_client: TestClient):
@@ -49,5 +52,11 @@ def post_measurement_should_return_422_if_measurement_value_is_impossible(test_c
     response = test_client.post("/measurements/myroom", json={"v": -100, "ts": "2023-11-19T12:00:00Z"})
     assert response.status_code == 422
     body = response.json()
-    assert body["detail"] == "Kelvin value must be greater than or equal to 0"
+    assert "Kelvin value must be greater than or equal to 0" in body["detail"][0]["msg"]
     database.insert_measurement.assert_not_called()
+
+
+def create_measurement_dto_should_not_allow_negative_kelvin():
+    with pytest.raises(ValidationError) as e:
+        CreateMeasurementDTO(v=-100, u="K", ts=datetime(2023, 11, 19, 12, 0, 0, 0, tzinfo=ZoneInfo("UTC")))
+    assert "Kelvin value must be greater than or equal to 0" in str(e.value)
