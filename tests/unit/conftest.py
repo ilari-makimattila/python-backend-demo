@@ -1,5 +1,11 @@
 import pytest
+from unittest.mock import Mock
 from fastapi.testclient import TestClient
+
+
+@pytest.fixture()
+def database():
+    return Mock()
 
 
 @pytest.fixture()
