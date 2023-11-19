@@ -66,3 +66,12 @@ make typecheck
 # or both at the same time:
 make check
 ```
+
+### Development using Docker
+
+Start the app in docker:
+```
+make dev-docker
+```
+This will run migrations and start the app in dev mode. It will automatically
+restart whenever a file is changed.

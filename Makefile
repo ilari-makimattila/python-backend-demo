@@ -7,6 +7,11 @@ run-db:
 dev: run-db
 	poetry run python -m demo_app http --dev
 
+dev-docker:
+	docker compose up -d database
+	docker compose run --rm app migrate
+	docker compose run --rm app
+
 lint:
 	poetry run ruff check .
 
