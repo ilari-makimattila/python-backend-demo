@@ -60,3 +60,9 @@ def create_measurement_dto_should_not_allow_negative_kelvin():
     with pytest.raises(ValidationError) as e:
         CreateMeasurementDTO(v=-100, u="K", ts=datetime(2023, 11, 19, 12, 0, 0, 0, tzinfo=ZoneInfo("UTC")))
     assert "Kelvin value must be greater than or equal to 0" in str(e.value)
+
+
+def get_measurement_average_should_return_404_if_room_is_not_found(test_client: TestClient, database: Mock):
+    database.get_room_average.return_value = None
+    response = test_client.get("/measurements/myroom/average/PT5M")
+    assert response.status_code == 404
