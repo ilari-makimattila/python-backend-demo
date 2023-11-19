@@ -24,3 +24,4 @@ class MeasurementAverage(BaseModel):
     unit: Unit
     interval_start_timestamp: datetime
     interval_end_timestamp: datetime
+    measurement_count: int

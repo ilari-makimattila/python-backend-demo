@@ -1,7 +1,8 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import asyncpg
 from demo_app.db.models.database_base import Database
-from demo_app.db.models.measurement import Measurement, MeasurementAverage
+from demo_app.db.models.measurement import Measurement, MeasurementAverage, Unit
 from demo_app.settings import Settings
 
 
@@ -56,4 +57,33 @@ class AsyncpgDatabase(Database):
         return not not result
 
     async def get_room_average(self, room_id: str, duration: timedelta) -> MeasurementAverage | None:
-        raise NotImplementedError
+        if self.conn is None:
+            raise NotConnectedError()
+        result = await self.conn.fetch(
+            """
+            SELECT
+                AVG(value) AS value,
+                MIN(timestamp_ns) AS interval_start_timestamp,
+                MAX(timestamp_ns) AS interval_end_timestamp,
+                COUNT(*) AS count
+            FROM measurements
+            WHERE room_id = $1
+            AND timestamp_ns >= $2
+            """,
+            room_id,
+            (datetime.utcnow() - duration).timestamp() * 1_000_000_000,
+        )
+        if len(result) == 0 or result[0]["count"] == 0:
+            return None
+        print(result)
+        return MeasurementAverage(
+            value=result[0]["value"],
+            unit=Unit.K,
+            interval_start_timestamp=datetime.fromtimestamp(
+                result[0]["interval_start_timestamp"] / 1_000_000_000, tz=ZoneInfo("UTC"),
+            ),
+            interval_end_timestamp=datetime.fromtimestamp(
+                result[0]["interval_end_timestamp"] / 1_000_000_000, tz=ZoneInfo("UTC"),
+            ),
+            measurement_count=result[0]["count"],
+        )

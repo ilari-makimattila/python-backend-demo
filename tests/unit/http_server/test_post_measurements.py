@@ -80,6 +80,7 @@ def get_measurement_average_should_return_the_average(test_client: TestClient, d
         unit=Unit.K,
         interval_start_timestamp=datetime(2023, 11, 19, 12, 5, 0, 0, tzinfo=ZoneInfo("UTC")),
         interval_end_timestamp=datetime(2023, 11, 19, 12, 10, 0, 0, tzinfo=ZoneInfo("UTC")),
+        measurement_count=3,
     )
     response = test_client.get("/measurements/myroom/average/PT5M")
     assert response.status_code == 200
