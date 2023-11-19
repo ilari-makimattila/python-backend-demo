@@ -10,7 +10,7 @@ from demo_app.settings import Settings
 @pytest.fixture()
 def settings() -> Settings:
     return Settings(
-        database_dsn="postgresql://demo:password@localhost:54321/demo",
+        database_dsn="postgresql://demo:password@localhost:54321/demo",  # assume docker postgres is up
     )
 
 
