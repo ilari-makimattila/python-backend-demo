@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 import pytest
 
-from demo_app.db.models.measurement import Measurement, Unit
+from demo_app.db.models.measurement import Measurement, MeasurementAverage, Unit
 from demo_app.http_server.routes.measurements import CreateMeasurementDTO
 
 
@@ -66,3 +66,19 @@ def get_measurement_average_should_return_404_if_room_is_not_found(test_client: 
     database.get_room_average.return_value = None
     response = test_client.get("/measurements/myroom/average/PT5M")
     assert response.status_code == 404
+
+
+def get_measurement_average_should_return_the_average(test_client: TestClient, database: Mock):
+    database.get_room_average.return_value = MeasurementAverage(
+        value=320.0,
+        unit=Unit.K,
+        interval_start_timestamp=datetime(2023, 11, 19, 12, 5, 0, 0, tzinfo=ZoneInfo("UTC")),
+        interval_end_timestamp=datetime(2023, 11, 19, 12, 10, 0, 0, tzinfo=ZoneInfo("UTC")),
+    )
+    response = test_client.get("/measurements/myroom/average/PT5M")
+    assert response.status_code == 200
+    assert response.json().items() >= {
+        "v": 320.0,
+        "u": "K",
+        "ts": "2023-11-19T12:05:00Z"
+    }.items()

@@ -71,4 +71,8 @@ async def get_room_average(
     result = database.get_room_average(room_id, duration)
     if result is None:
         raise HTTPException(status_code=404, detail="Room not found")
-    raise NotImplementedError()
+    return RoomAverageTemperatureDTO(
+        v=result.value,
+        u=result.unit,
+        ts=result.interval_start_timestamp,
+    )
