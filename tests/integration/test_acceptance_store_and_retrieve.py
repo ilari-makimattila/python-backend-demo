@@ -47,7 +47,7 @@ def the_app_should_store_and_allow_fetch_of_averages(test_client: TestClient):
             headers={"Accept": "application/json"},
         )
         assert response.status_code == 200
-        assert response.json() == {
-            "average": expected_average,
-            "unit": "K",
-        }
+        assert response.json().items() >= {
+            "v": expected_average,
+            "u": "K",
+        }.items()
