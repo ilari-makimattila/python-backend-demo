@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yml"
+          services: |
+            database
+
       - name: Setup Python
         uses: trim21/setup-poetry@dist/v2
         with:
