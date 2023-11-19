@@ -23,17 +23,14 @@ def the_app_should_store_and_allow_fetch_of_averages(test_client: TestClient):
         in rooms
     }
 
+    since = (datetime.utcnow() - timedelta(minutes=15)).isoformat()
     expected_averages = {
         room: sum(
             m["v"]
             for m
             in measurements[room]
-            if m["ts"] > (datetime.utcnow() - timedelta(minutes=15)).isoformat()
-            ) / max(reduce(
-                lambda a, b: a + 1 if b["ts"] > (datetime.utcnow() - timedelta(minutes=15)).isoformat() else a,
-                measurements[room],
-                0,
-            ), 1)
+            if m["ts"] > since
+            ) / max(reduce(lambda a, b: a + 1 if b["ts"] > since else a, measurements[room], 0), 1)
         for room
         in rooms
     }
